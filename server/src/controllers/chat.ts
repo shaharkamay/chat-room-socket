@@ -1,19 +1,17 @@
 import { Socket } from 'socket.io';
 import { io } from '../index';
 import { Message, NewMessage } from '../types/message';
-// import chatService from '../services/chat';
-const messages: Message[] = [];
-const chatController = (socket: Socket) => {
+import chatService from '../services/chat';
+
+const chatController = async (socket: Socket) => {
+  console.log('connection socket');
+  const messages: Message[] = await chatService.getAllMessages();
   io.emit('message', messages);
-  socket.on('message', (newMessage: NewMessage) => {
-    console.log(newMessage);
-    const message: Message = { ...newMessage, id: 'dksfmlksd' };
-    console.log(message);
-    messages.push(message);
+  socket.on('message', async (newMessage: NewMessage) => {
+    const sentMessage = await chatService.sendMessage(newMessage);
+    messages.push(sentMessage);
     io.emit('message', messages);
   });
-  console.log('connection socket');
-  // socket.emit('message', 'Hello from Socket.io');
 
   socket.on('disconnect', () => {
     console.log('client disconnected socket');
