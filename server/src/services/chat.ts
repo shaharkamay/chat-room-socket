@@ -1,16 +1,8 @@
-import MessageModel from '../models/message';
-import { Message, NewMessage } from '../types/message';
+import MessageModel from "../models/message";
+import { Message, NewMessage } from "../types/message";
 
-const sendMessage = async ({
-  email,
-  content,
-  timestamp,
-}: NewMessage): Promise<Message> => {
-  const message: Message = await MessageModel.create({
-    email,
-    content,
-    timestamp,
-  });
+const sendMessage = async ({ email, content, timestamp }: NewMessage): Promise<Message> => {
+  const message: Message = await MessageModel.create({ email, content, timestamp });
   return message;
 };
 
