@@ -15,8 +15,20 @@ const io = new socketIo.Server(server, {
 
 const url = config.mongo.url;
 
-// console.log(url);
-
+// const messages: Message[] = [
+//   {
+//     id: 'dfsd',
+//     email: 'nadav@gmail.com',
+//     content: 'message1',
+//     timestamp: 134462,
+//   },
+//   {
+//     id: 'dfsd2',
+//     email: 'nadav2@gmail.com',
+//     content: 'message2',
+//     timestamp: 1344622,
+//   },
+// ];
 
 io.on('connection', chatController);
 
