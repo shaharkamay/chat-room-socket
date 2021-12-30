@@ -9,7 +9,7 @@ export interface AuthContextInterface {
   login: (
     { email, password }: { email: string; password: string },
     headers?: AxiosRequestHeaders | undefined
-  ) => Promise<any>;
+  ) => Promise<void>;
   signUp: ({
     firstName,
     lastName,

@@ -3,28 +3,14 @@ import { io } from '../index';
 import { Message, NewMessage } from '../types/message';
 import chatService from '../services/chat';
 import { getAllUsers, userJoin, userLeave } from '../utils/users';
-import { SocketUser } from '../types/user';
-
-// const onlines: SocketUser[] = [];
 
 const chatController = async (socket: Socket) => {
   console.log('connected to Socket');
-  socket.on('join', (email) => {
+  socket.on('join', (email: string) => {
     userJoin(socket.id, email);
-
-    // onlines.push(user);
 
     io.emit('onlines', getAllUsers());
   });
-  // socket.on('onlines', (email: string) => {
-  //   console.log(email);
-  //   if (email) {
-  //     if (!onlines.includes(email)) {
-  //       onlines.push(email);
-  //     }
-  //   }
-
-  // });
 
   const messages: Message[] = await chatService.getAllMessages();
   io.emit('message', messages);
