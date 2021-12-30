@@ -22,5 +22,9 @@ export type TwoFactorOptions = {
   name: string;
   account: string;
 };
+export type SocketUser = {
+  socketId: string;
+  email: string;
+};
 
 export type LoggedUserFields = Omit<NewUserFields, 'firstName' | 'lastName'>;

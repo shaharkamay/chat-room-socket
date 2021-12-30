@@ -7,10 +7,10 @@ import { Socket } from 'socket.io-client';
 
 function ChatBox({
   messages,
-  socketRef,
+  socket,
 }: {
   messages: MessageType[];
-  socketRef: Socket;
+  socket: Socket;
 }) {
   const authContext = useContext(AuthContext);
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
@@ -36,7 +36,7 @@ function ChatBox({
             })}
         </div>
       </div>
-      <SendMessage socketRef={socketRef} />
+      <SendMessage socket={socket} />
     </div>
   );
 }
