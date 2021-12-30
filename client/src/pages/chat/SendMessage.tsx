@@ -4,7 +4,7 @@ import { AuthContext } from '../../contexts/AuthContext';
 // import BASE_URL from '../../index';
 import { Socket } from 'socket.io-client';
 
-function SendMessage({ socketRef }: { socketRef: Socket }) {
+function SendMessage({ socket }: { socket: Socket }) {
   const authContext = useContext(AuthContext);
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const accessToken = authContext?.accessToken;
@@ -16,7 +16,7 @@ function SendMessage({ socketRef }: { socketRef: Socket }) {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-    socketRef.current.emit('message', {
+    socket.emit('message', {
       email: authContext?.email,
       content: sendMessage,
       timestamp: Date.now(),

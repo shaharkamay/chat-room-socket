@@ -17,6 +17,10 @@ export type NewUserFields = {
   password: unknown;
 };
 
+export type SocketUser = {
+  socketId: string;
+  email: string;
+};
 // export type AuthenticatedUser = Omit<User, "firstName" | "lastName" | "password">;
 
 export type LoggedUserFields = Omit<NewUserFields, 'firstName' | 'lastName'>;
