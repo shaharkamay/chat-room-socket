@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { AuthContext } from '../../contexts/AuthContext';
 import '../../assets/styles/chat.scss';
@@ -9,10 +9,6 @@ import { Message as MessageType } from '../../types/message';
 import io, { Socket } from 'socket.io-client';
 import { SocketUser } from '../../types/user';
 
-const socket: Socket = io(BASE_URL, {
-  transports: ['websocket'],
-  path: '/chat',
-});
 function Chat() {
   const authContext = useContext(AuthContext);
 
@@ -24,6 +20,8 @@ function Chat() {
 
   const [online, setOnline] = useState<SocketUser[]>([]);
 
+  const socketRef = useRef() as { current: Socket };
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -31,26 +29,25 @@ function Chat() {
   }, [loggedIn]);
 
   useEffect(() => {
-    const socket = io(BASE_URL, {
+    socketRef.current = io(BASE_URL, {
       transports: ['websocket'],
       path: '/chat',
     });
 
-    socket.on('connect', () => {
-      socket.emit('join', email);
+    socketRef.current.on('connect', () => {
+      socketRef.current.emit('join', email);
       console.log('Socket Has Connected');
     });
 
-    socket.on('disconnect', () => {
+    socketRef.current.on('disconnect', () => {
       console.log('Socket Has Been Disconnected');
     });
 
-    socket.on('message', (serverMessages: MessageType[]) => {
+    socketRef.current.on('message', (serverMessages: MessageType[]) => {
       setMessages([...serverMessages]);
     });
 
-    socket.on('onlines', (online: SocketUser[]) => {
-      console.log(online);
+    socketRef.current.on('onlines', (online: SocketUser[]) => {
       setOnline(online);
     });
   }, []);
@@ -61,7 +58,7 @@ function Chat() {
         <ChatAside online={online} />
         {/* eslint-disable-next-line */}
         {/* @ts-ignore */}
-        <ChatBox messages={messages} socket={socket} />
+        <ChatBox messages={messages} socket={socketRef.current} />
       </div>
     </div>
   );
