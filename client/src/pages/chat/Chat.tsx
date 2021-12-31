@@ -45,9 +45,14 @@ function Chat() {
     });
 
     socketRef.current.on('message', (newMessage: NewMessage) => {
+      console.log(newMessage);
       // // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       // if(newMessage.direct) setDirect(newMessage.direct);
-      setMessages((messages)=>[...messages, newMessage]);
+      const tempMessages = [...messages];
+      tempMessages.push(newMessage);
+      console.log(tempMessages);
+      // setMessages((messages)=>[...messages, newMessage]);
+      setMessages(tempMessages);
     });
 
     socketRef.current.on('onlines', (online: SocketUser[]) => {

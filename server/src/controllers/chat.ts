@@ -22,17 +22,17 @@ const chatController =  (socket: Socket) => {
     
     io.emit('message', newMessage);
   });
-
   socket.on('direct',(newMessage:NewMessage)=>{
-    console.log("DIRECT");
+    console.log(getAllUsers());
+    console.log(newMessage);
     if(newMessage.direct){
       const user = getUserByEmail(newMessage.direct);
-    console.log(user);
-    if(user) {
-      const socketId=user.socketId;
-      console.log(socketId);
-      socket.broadcast.to(socketId).emit('message', newMessage);
-    }
+      console.log(user);
+      if(user) {
+        const socketId = user.socketId;
+        console.log(socketId);
+        socket.broadcast.to(socketId).emit('message', newMessage);
+      }
     }
     
     return;

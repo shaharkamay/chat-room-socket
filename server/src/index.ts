@@ -15,39 +15,11 @@ const io = new socketIo.Server(server, {
 
 const url = config.mongo.url;
 
-// const messages: Message[] = [
-//   {
-//     id: 'dfsd',
-//     email: 'nadav@gmail.com',
-//     content: 'message1',
-//     timestamp: 134462,
-//   },
-//   {
-//     id: 'dfsd2',
-//     email: 'nadav2@gmail.com',
-//     content: 'message2',
-//     timestamp: 1344622,
-//   },
-// ];
+
 
 io.on('connection', chatController);
 
-// io.on('connection', (socket: Socket) => {
-//   io.emit('message', messages);
-//   socket.on('message', (newMessage: NewMessage) => {
-//     console.log(newMessage);
-//     const message: Message = { ...newMessage, id: 'dksfmlksd' };
-//     console.log(message);
-//     messages.push(message);
-//     io.emit('message', messages);
-//   });
-//   console.log('connection socket');
-//   // socket.emit('message', 'Hello from Socket.io');
 
-//   socket.on('disconnect', () => {
-//     console.log('client disconnected socket');
-//   });
-// });
 
 mongoose
   .connect(url, config.mongo.options)

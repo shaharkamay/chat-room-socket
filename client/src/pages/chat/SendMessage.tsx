@@ -29,6 +29,7 @@ function SendMessage({ sendDirect, socket }: { sendDirect:string, socket: Socket
         direct: sendDirect,
         timestamp: Date.now(),
       });
+      console.log(sendDirect);
     }
     setSendMessage('');
   };

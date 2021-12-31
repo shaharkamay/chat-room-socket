@@ -22,6 +22,7 @@ function ChatBox({
     <div className="chat__box--container">
       <div className="chat__box">
         <div className="chat__box--messages">
+          {console.log(messages)}
           {messages &&
             messages.map((message, i) => {
               return (
