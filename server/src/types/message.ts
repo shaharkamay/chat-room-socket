@@ -3,6 +3,7 @@ export type Message = {
   email: string,
   content: string,
   timestamp: number,
+  direct?:string,
 };
 
 export type NewMessage = Omit<Message, "id">;

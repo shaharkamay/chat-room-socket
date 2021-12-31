@@ -1,13 +1,15 @@
+/* eslint-disable @typescript-eslint/restrict-template-expressions */
 import React from "react";
 import { MessageProps } from "../../types/message";
 
 
-function Message({ dir, email, content, timestamp }: MessageProps) {
+function Message({ dir, email, content, timestamp, direct }: MessageProps) {
   return (
     <div className={`message__container message__container--${dir}`}>
       <div className={`chat__message message--${dir}`}>
         <div className="message__user" style={{ color: generateUserColor(email) }}>
-          {email}
+          {console.log(`direct: ${direct}`)}
+          {email} {direct ? <small style={{color:'var(--foreground)'}}>(Direct Message)</small> : ''}
         </div>
         <div className="message__content" dir="auto">
           {content}

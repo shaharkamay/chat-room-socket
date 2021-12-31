@@ -5,7 +5,7 @@ import '../../assets/styles/chat.scss';
 import ChatAside from './ChatAside';
 import ChatBox from './ChatBox';
 import BASE_URL from '../../index';
-import { Message as MessageType } from '../../types/message';
+import {NewMessage } from '../../types/message';
 import io, { Socket } from 'socket.io-client';
 import { SocketUser } from '../../types/user';
 
@@ -16,9 +16,10 @@ function Chat() {
 
   const email = authContext?.email;
 
-  const [messages, setMessages] = useState<MessageType[]>([]);
+  const [messages, setMessages] = useState<NewMessage[]>([]);
 
   const [online, setOnline] = useState<SocketUser[]>([]);
+  const  [sendDirect,setSendDirect] = useState<string>("");
 
   const socketRef = useRef() as { current: Socket };
 
@@ -43,8 +44,10 @@ function Chat() {
       console.log('Socket Has Been Disconnected');
     });
 
-    socketRef.current.on('message', (serverMessages: MessageType[]) => {
-      setMessages([...serverMessages]);
+    socketRef.current.on('message', (newMessage: NewMessage) => {
+      // // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+      // if(newMessage.direct) setDirect(newMessage.direct);
+      setMessages((messages)=>[...messages, newMessage]);
     });
 
     socketRef.current.on('onlines', (online: SocketUser[]) => {
@@ -55,10 +58,10 @@ function Chat() {
   return (
     <div className="chat">
       <div className="chat-container row-large">
-        <ChatAside online={online} />
+        <ChatAside online={online} sendDirect={sendDirect} setSendDirect={setSendDirect} />
         {/* eslint-disable-next-line */}
         {/* @ts-ignore */}
-        <ChatBox messages={messages} socket={socketRef.current} />
+        <ChatBox sendDirect={sendDirect} messages={messages} socket={socketRef.current} />
       </div>
     </div>
   );

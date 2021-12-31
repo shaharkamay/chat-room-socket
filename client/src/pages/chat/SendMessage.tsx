@@ -4,11 +4,11 @@ import { AuthContext } from '../../contexts/AuthContext';
 // import BASE_URL from '../../index';
 import { Socket } from 'socket.io-client';
 
-function SendMessage({ socket }: { socket: Socket }) {
+function SendMessage({ sendDirect, socket }: { sendDirect:string, socket: Socket }) {
   const authContext = useContext(AuthContext);
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  const accessToken = authContext?.accessToken;
-  console.log(accessToken);
+  // const accessToken = authContext?.accessToken;
+  
 
   const [sendMessage, setSendMessage] = useState('');
   const handleSubmit = (e: FormEvent) => {
@@ -16,12 +16,20 @@ function SendMessage({ socket }: { socket: Socket }) {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-
-    socket.emit('message', {
-      email: authContext?.email,
-      content: sendMessage,
-      timestamp: Date.now(),
-    });
+    if(sendDirect === '') {
+      socket.emit('message', {
+        email: authContext?.email,
+        content: sendMessage,
+        timestamp: Date.now(),
+      });
+    }else{
+      socket.emit('direct', {
+        email: authContext?.email,
+        content: sendMessage,
+        direct: sendDirect,
+        timestamp: Date.now(),
+      });
+    }
     setSendMessage('');
   };
   return (

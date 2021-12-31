@@ -2,14 +2,16 @@ import React, { useContext } from 'react';
 import Message from './Message';
 import SendMessage from './SendMessage';
 import { AuthContext } from '../../contexts/AuthContext';
-import { Message as MessageType } from '../../types/message';
+import { NewMessage} from '../../types/message';
 import { Socket } from 'socket.io-client';
 
 function ChatBox({
+  sendDirect,
   messages,
   socket,
 }: {
-  messages: MessageType[];
+  sendDirect: string,
+  messages: NewMessage[];
   socket: Socket;
 }) {
   const authContext = useContext(AuthContext);
@@ -24,6 +26,8 @@ function ChatBox({
             messages.map((message, i) => {
               return (
                 <Message
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+                  direct={message.direct || ''}
                   dir={email === message.email ? 'right' : 'left'}
                   email={message.email}
                   content={message.content}
@@ -36,7 +40,7 @@ function ChatBox({
             })}
         </div>
       </div>
-      <SendMessage socket={socket} />
+      <SendMessage sendDirect={sendDirect} socket={socket} />
     </div>
   );
 }

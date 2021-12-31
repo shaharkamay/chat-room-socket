@@ -6,7 +6,7 @@ const users: SocketUser[] = [];
 function userJoin(socketId: string, email: string) {
   const user: SocketUser = { socketId, email };
 
-  if (!users.find((user) => user.email === email)) {
+  if (email && !users.find((user) => user.email === email)) {
     users.push(user);
   }
 
@@ -14,8 +14,13 @@ function userJoin(socketId: string, email: string) {
 }
 
 // Get current user
-function getCurrentUser(socketId: string) {
+function getCurrentUser(socketId: string): SocketUser | undefined {
   return users.find((user) => user.socketId === socketId);
+}
+
+// Get userByEmail
+function getUserByEmail(email: string): SocketUser | undefined {
+  return users.find((user) => user.email === email);
 }
 
 // User leaves chat
@@ -41,5 +46,6 @@ export {
   getCurrentUser,
   userLeave,
   getAllUsers,
+  getUserByEmail
   // getRoomUsers
 };
