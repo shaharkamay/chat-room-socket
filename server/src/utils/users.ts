@@ -5,9 +5,10 @@ const users: SocketUser[] = [];
 // Join user to chat
 function userJoin(socketId: string, email: string) {
   const user: SocketUser = { socketId, email };
-
-  if (email && !users.find((user) => user.email === email)) {
-    users.push(user);
+  const index = users.findIndex((user) => user.email === email);
+  if (email) {
+    if (index !== -1) users.splice(index, 1, user);
+    else users.push(user);
   }
 
   return user;
@@ -46,6 +47,6 @@ export {
   getCurrentUser,
   userLeave,
   getAllUsers,
-  getUserByEmail
+  getUserByEmail,
   // getRoomUsers
 };
