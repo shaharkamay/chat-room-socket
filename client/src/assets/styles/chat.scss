@@ -150,6 +150,13 @@
             text-overflow: ellipsis;
         }
     }
+    .aside__user:hover {
+        cursor: pointer;
+        background-color: var(--clr-secondary);
+    }
+    .aside__user--active {
+        background-color: var(--clr-secondary);
+    }
 }
 
 /* 

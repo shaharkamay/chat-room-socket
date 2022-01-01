@@ -1,60 +1,54 @@
-import { EventEmitter } from 'events';
-import { NextFunction, Request, Response } from 'express';
-import { NewMessage, Message } from '../types/message';
-import chatService from '../services/chat';
+import { Socket } from 'socket.io';
+import { io } from '../index';
+import { NewMessage } from '../types/message';
+// import chatService from '../services/chat';
+import {
+  getAllUsers,
+  userJoin,
+  userLeave,
+  getUserByEmail,
+} from '../utils/users';
 
-const emitter = new EventEmitter();
-let online: string[] = [];
+// const messages:NewMessage[] = [];
 
-const sendMessage = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const message: NewMessage = {
-      email: <string>res.locals.user.email,
-      content: <string>req.body.content,
-      timestamp: Date.now(),
-    };
-    const sentMessage = await chatService.sendMessage(message);
-    res.json({ sentMessage });
-    emitter.emit('message', sentMessage);
-  } catch (err) {
-    next(err);
-  }
-};
+const chatController = (socket: Socket) => {
+  console.log('connected to Socket');
+  socket.on('join', (email: string) => {
+    userJoin(socket.id, email);
+    io.emit('onlines', getAllUsers());
+  });
 
-const getAllMessages = async (req: Request, res: Response, next: NextFunction) => {
-  const sendOnlineUsers = () => {
-    res.write(`data: ${JSON.stringify({ online })} \n\n`);
-  };
+  // const messages: Message[] = await chatService.getAllMessages();
+  // io.emit('message', message);
 
-  try {
-    if (!online.includes(<string>res.locals.user.email)) {
-      online.push(<string>res.locals.user.email);
+  socket.on('message', (newMessage: NewMessage) => {
+    // const sentMessage = await chatService.sendMessage(newMessage);
+    // messages.push(newMessage);
+
+    io.emit('message', newMessage);
+  });
+
+  socket.on('direct', (newMessage: NewMessage) => {
+    console.log('DIRECT');
+    if (newMessage.direct) {
+      const user = getUserByEmail(newMessage.direct);
+      console.log(user);
+      if (user) {
+        const socketId = user.socketId;
+        console.log(socketId);
+        socket.broadcast.to(socketId).emit('message', newMessage);
+      }
     }
 
-    res.writeHead(200, {
-      "Content-Type": "text/event-stream",
-      Connection: "Keep-Alive",
-    });
+    return;
+  });
 
-    emitter.addListener('online', sendOnlineUsers);
-    emitter.emit('online');
-
-    const messages: Message[] = await chatService.getAllMessages();
-
-    res.write(`data: ${JSON.stringify({ messages })} \n\n`);
-
-    emitter.on('message', (newMessage: Message) => {
-      res.write(`data: ${JSON.stringify({ newMessage })} \n\n`);
-    });
-
-    req.on('close', () => {
-      online = online.filter(email => email !== <string>res.locals.user.email);
-      emitter.emit('online');
-    });
-
-  } catch (err) {
-    next(err);
-  }
+  socket.on('disconnect', () => {
+    userLeave(socket.id);
+    console.log(getAllUsers());
+    io.emit('onlines', getAllUsers());
+    console.log('client disconnected socket');
+  });
 };
 
-export { sendMessage, getAllMessages };
+export default chatController;

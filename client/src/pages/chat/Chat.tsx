@@ -1,64 +1,76 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { AuthContext } from '../../contexts/AuthContext';
 import '../../assets/styles/chat.scss';
 import ChatAside from './ChatAside';
 import ChatBox from './ChatBox';
-import { EventSourcePolyfill } from 'event-source-polyfill';
 import BASE_URL from '../../index';
-import { Message as MessageType } from '../../types/message';
+import { NewMessage } from '../../types/message';
+import io, { Socket } from 'socket.io-client';
+import { SocketUser } from '../../types/user';
 
 function Chat() {
   const authContext = useContext(AuthContext);
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+
   const loggedIn = authContext?.loggedIn;
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  const accessToken = authContext?.accessToken;
 
-  const [messages, setMessages] = useState<MessageType[]>([]);
+  const email = authContext?.email;
 
-  const [online, setOnline] = useState([]);
+  const [messages, setMessages] = useState<NewMessage[]>([]);
+
+  const [online, setOnline] = useState<SocketUser[]>([]);
+  const [sendDirect, setSendDirect] = useState<string>('');
+
+  const socketRef = useRef() as { current: Socket };
 
   const navigate = useNavigate();
 
   useEffect(() => {
     if (!loggedIn) navigate('/');
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
-    const source = new EventSourcePolyfill(`${BASE_URL || ''}/api/chat/message`, {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      headers: { "Content-Type": "text/event-stream", auth: accessToken || '' },
+  }, [loggedIn]);
+
+  useEffect(() => {
+    socketRef.current = io(BASE_URL, {
+      transports: ['websocket'],
+      path: '/chat',
     });
 
-    source.onopen = function () {
-      console.log("connection to stream has been opened");
-    };
-    source.onerror = function (error) {
-      console.log("An error has occurred while receiving stream", error);
-    };
-    source.onmessage = function (event) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-argument
-      // eslint-disable-next-line 
-      const data = JSON.parse(event.data);
-      if (data.messages) {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-        setMessages(data.messages);
-      }
-      if (data.newMessage) {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-        setMessages(messages => [...messages, data.newMessage]);
-      }
-      if (data.online) {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-        setOnline(data.online);
-      }
-    };
-  }, [accessToken, loggedIn, navigate]);
+    socketRef.current.on('connect', () => {
+      socketRef.current.emit('join', email);
+      console.log('Socket Has Connected');
+    });
+
+    socketRef.current.on('disconnect', () => {
+      console.log('Socket Has Been Disconnected');
+    });
+
+    socketRef.current.on('message', (newMessage: NewMessage) => {
+      // // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+      // if(newMessage.direct) setDirect(newMessage.direct);
+      setMessages((messages) => [...messages, newMessage]);
+    });
+
+    socketRef.current.on('onlines', (online: SocketUser[]) => {
+      setOnline(online.filter((user) => user.email !== email));
+    });
+  }, []);
 
   return (
     <div className="chat">
       <div className="chat-container row-large">
-        <ChatAside online={online} />
-        <ChatBox messages={messages} />
+        <ChatAside
+          online={online}
+          sendDirect={sendDirect}
+          setSendDirect={setSendDirect}
+        />
+        {/* eslint-disable-next-line */}
+        {/* @ts-ignore */}
+        <ChatBox
+          sendDirect={sendDirect}
+          messages={messages}
+          socket={socketRef.current}
+          setMessages={setMessages}
+        />
       </div>
     </div>
   );
