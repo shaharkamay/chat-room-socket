@@ -1,34 +1,43 @@
-import React, { useState, useContext, FormEvent } from 'react';
+import React, {
+  useState,
+  useContext,
+  FormEvent,
+  Dispatch,
+  SetStateAction,
+} from 'react';
 // import axios from 'axios';
 import { AuthContext } from '../../contexts/AuthContext';
 // import BASE_URL from '../../index';
 import { Socket } from 'socket.io-client';
+import { NewMessage } from '../../types/message';
 
-function SendMessage({ sendDirect, socket }: { sendDirect:string, socket: Socket }) {
+function SendMessage({
+  sendDirect,
+  socket,
+  setMessages,
+}: {
+  sendDirect: string;
+  socket: Socket;
+  setMessages: Dispatch<SetStateAction<NewMessage[]>>;
+}) {
   const authContext = useContext(AuthContext);
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   // const accessToken = authContext?.accessToken;
-  
 
   const [sendMessage, setSendMessage] = useState('');
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-    if(sendDirect === '') {
-      socket.emit('message', {
-        email: authContext?.email,
-        content: sendMessage,
-        timestamp: Date.now(),
-      });
-    }else{
-      socket.emit('direct', {
-        email: authContext?.email,
-        content: sendMessage,
-        direct: sendDirect,
-        timestamp: Date.now(),
-      });
+    const message: NewMessage = {
+      email: authContext?.email as string,
+      content: sendMessage,
+      timestamp: Date.now(),
+    };
+    if (sendDirect === '') {
+      socket.emit('message', message);
+    } else {
+      message.direct = sendDirect;
+      setMessages((messages) => [...messages, message]);
+      socket.emit('direct', message);
     }
     setSendMessage('');
   };

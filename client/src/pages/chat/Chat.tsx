@@ -5,7 +5,7 @@ import '../../assets/styles/chat.scss';
 import ChatAside from './ChatAside';
 import ChatBox from './ChatBox';
 import BASE_URL from '../../index';
-import {NewMessage } from '../../types/message';
+import { NewMessage } from '../../types/message';
 import io, { Socket } from 'socket.io-client';
 import { SocketUser } from '../../types/user';
 
@@ -19,7 +19,7 @@ function Chat() {
   const [messages, setMessages] = useState<NewMessage[]>([]);
 
   const [online, setOnline] = useState<SocketUser[]>([]);
-  const  [sendDirect,setSendDirect] = useState<string>("");
+  const [sendDirect, setSendDirect] = useState<string>('');
 
   const socketRef = useRef() as { current: Socket };
 
@@ -47,21 +47,30 @@ function Chat() {
     socketRef.current.on('message', (newMessage: NewMessage) => {
       // // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       // if(newMessage.direct) setDirect(newMessage.direct);
-      setMessages((messages)=>[...messages, newMessage]);
+      setMessages((messages) => [...messages, newMessage]);
     });
 
     socketRef.current.on('onlines', (online: SocketUser[]) => {
-      setOnline(online);
+      setOnline(online.filter((user) => user.email !== email));
     });
   }, []);
 
   return (
     <div className="chat">
       <div className="chat-container row-large">
-        <ChatAside online={online} sendDirect={sendDirect} setSendDirect={setSendDirect} />
+        <ChatAside
+          online={online}
+          sendDirect={sendDirect}
+          setSendDirect={setSendDirect}
+        />
         {/* eslint-disable-next-line */}
         {/* @ts-ignore */}
-        <ChatBox sendDirect={sendDirect} messages={messages} socket={socketRef.current} />
+        <ChatBox
+          sendDirect={sendDirect}
+          messages={messages}
+          socket={socketRef.current}
+          setMessages={setMessages}
+        />
       </div>
     </div>
   );

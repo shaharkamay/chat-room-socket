@@ -7,9 +7,9 @@ function Message({ dir, email, content, timestamp, direct }: MessageProps) {
   return (
     <div className={`message__container message__container--${dir}`}>
       <div className={`chat__message message--${dir}`}>
-        <div className="message__user" style={{ color: generateUserColor(email) }}>
+        <div className="message__user" style={{ color: generateUserColor(email), display: (!direct && dir === 'right' ? 'none' : 'unset') }}>
           {console.log(`direct: ${direct}`)}
-          {email} {direct ? <small style={{color:'var(--foreground)'}}>(Direct Message)</small> : ''}
+          {dir === 'left' ? email : ''} {direct ? (dir === 'right' ? <small style={{color:'var(--foreground)'}}>(To: {direct})</small> : <small style={{color:'var(--foreground)'}}>(Direct Message)</small>) : ''}
         </div>
         <div className="message__content" dir="auto">
           {content}
