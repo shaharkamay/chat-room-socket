@@ -1,7 +1,8 @@
 import axios, { AxiosRequestHeaders } from 'axios';
-import React, { useCallback, useState, useEffect } from 'react';
+import React, { useCallback, useState, useEffect, useContext } from 'react';
 import BASE_URL from '../index';
 import { AuthContextInterface } from '../types/auth';
+import ErrorContext from './ErrorContext';
 
 export const AuthContext = React.createContext<AuthContextInterface | null>(
   null
@@ -9,6 +10,10 @@ export const AuthContext = React.createContext<AuthContextInterface | null>(
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const AuthProvider = ({ children }: any) => {
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  //@ts-ignore
+  const errorContext = useContext(ErrorContext);
+  const notyf = errorContext?.notyf;
   const [email, setEmail] = useState<string | null>(null);
   const [loggedIn, setLoggedIn] = useState<boolean>(false);
   const [refreshToken, setRefreshToken] = useState<string | null>(
@@ -50,8 +55,10 @@ export const AuthProvider = ({ children }: any) => {
           // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
           setEmail(data.email);
           setLoggedIn(true);
-        } catch (error) {
-          console.log(error);
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        } catch (error: any) {
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+          if (notyf) notyf.error(error.response.data);
           setRefreshToken(null);
         }
       }
@@ -67,8 +74,10 @@ export const AuthProvider = ({ children }: any) => {
           const data = await get2FASecret();
           // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
           setIs2FAEnabled(!('qr' in data.secret));
-        } catch (error) {
-          console.log(error);
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        } catch (error: any) {
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+          if (notyf) notyf.error(error.response.data);
           setIs2FAEnabled(false);
         }
       }
@@ -104,10 +113,11 @@ export const AuthProvider = ({ children }: any) => {
         localStorage.setItem('access', data.accessToken);
         setEmail(email);
         setLoggedIn(true);
+        if (notyf) notyf.success('Logged in successfully');
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (error: any) {
-        if (error.isAxiosError) console.log(error.response.data.error);
-        else console.log(error);
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+        if (notyf) notyf.error(error.response.data);
       }
     },
     []
@@ -132,36 +142,41 @@ export const AuthProvider = ({ children }: any) => {
           email,
           password,
         });
+        if (notyf) notyf.success('Signed up successfully');
         // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         return response.data;
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (error: any) {
-        if (error.isAxiosError) throw error.response.data.error;
-        else {
-          console.log(error);
-          throw Error('Something went bad');
-        }
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+        if (notyf) notyf.error(error.response.data);
       }
     },
     []
   );
 
   const logout = useCallback(async () => {
-    await axios.post(
-      `${BASE_URL}/api/auth/logout`,
-      {},
-      {
-        headers: {
-          Auth: accessToken || '',
-        },
-      }
-    );
-    setAccessToken(null);
-    setRefreshToken(null);
-    setEmail(null);
-    setLoggedIn(false);
-    localStorage.removeItem('refresh');
-    localStorage.removeItem('access');
+    try {
+      await axios.post(
+        `${BASE_URL}/api/auth/logout`,
+        {},
+        {
+          headers: {
+            Auth: accessToken || '',
+          },
+        }
+      );
+      setAccessToken(null);
+      setRefreshToken(null);
+      setEmail(null);
+      setLoggedIn(false);
+      localStorage.removeItem('refresh');
+      localStorage.removeItem('access');
+      if (notyf) notyf.success('Logged out successfully');
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+      if (notyf) notyf.error(error.response.data);
+    }
   }, [accessToken]);
 
   const enable2FA = useCallback(
@@ -180,14 +195,16 @@ export const AuthProvider = ({ children }: any) => {
         );
         if (data.is2FAEnabled) {
           setIs2FAEnabled(true);
+          if (notyf) notyf.success('2FA is enabled');
           // eslint-disable-next-line @typescript-eslint/no-unsafe-return
           return data.is2FAEnabled;
         }
+        if (notyf) notyf.error('Action denied!');
         return false;
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (error: any) {
-        if (error.isAxiosError) console.log(error.response.data.error);
-        else console.log(error);
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+        if (notyf) notyf.error(error.response.data);
       }
     },
     [loggedIn]
@@ -203,13 +220,16 @@ export const AuthProvider = ({ children }: any) => {
       });
       if (data.is2FADisabled) {
         setIs2FAEnabled(false);
+        if (notyf) notyf.success('2FA is disabled');
         // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         return data.is2FADisabled;
-      } else return false;
+      }
+      if (notyf) notyf.error('Action denied!');
+      return false;
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
-      if (error.isAxiosError) console.log(error.response.data.error);
-      else console.log(error);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+      if (notyf) notyf.error(error.response.data);
     }
   }, [loggedIn]);
 

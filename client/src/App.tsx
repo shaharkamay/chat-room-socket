@@ -10,6 +10,7 @@ import { AuthProvider } from './contexts/AuthContext';
 import Hello from './components/hello/Hello';
 import SignUp from './pages/sign-up/SignUp';
 import TwoFactor from './pages/login/TwoFactor';
+import { ErrorProvider } from './contexts/ErrorContext';
 
 function App() {
   const [theme, setTheme] = useState(
@@ -17,36 +18,38 @@ function App() {
   );
 
   return (
-    <AuthProvider>
-      <ThemeContext.Provider value={{ theme, setTheme }}>
-        <div className={`App ${theme}`}>
-          <BrowserRouter>
-            <Header />
-            <Hello />
-            <main>
-              <Routes>
-                {/* Main Route */}
-                <Route path="/" element={<Home />} />
+    <ErrorProvider>
+      <AuthProvider>
+        <ThemeContext.Provider value={{ theme, setTheme }}>
+          <div className={`App ${theme}`}>
+            <BrowserRouter>
+              <Header />
+              <Hello />
+              <main>
+                <Routes>
+                  {/* Main Route */}
+                  <Route path="/" element={<Home />} />
 
-                {/* Chat Route */}
-                <Route path="/chat" element={<Chat />} />
+                  {/* Chat Route */}
+                  <Route path="/chat" element={<Chat />} />
 
-                {/* Login Route */}
-                <Route path="/login" element={<Login />} />
-                <Route path="/2FA" element={<TwoFactor />} />
+                  {/* Login Route */}
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/2FA" element={<TwoFactor />} />
 
-                {/* Sign Up Route */}
-                <Route path="/sign-up" element={<SignUp />} />
+                  {/* Sign Up Route */}
+                  <Route path="/sign-up" element={<SignUp />} />
 
-                {/* Default Route */}
-                <Route path="*" element={<Home />} />
-              </Routes>
-            </main>
-            <Footer />
-          </BrowserRouter>
-        </div>
-      </ThemeContext.Provider>
-    </AuthProvider>
+                  {/* Default Route */}
+                  <Route path="*" element={<Home />} />
+                </Routes>
+              </main>
+              <Footer />
+            </BrowserRouter>
+          </div>
+        </ThemeContext.Provider>
+      </AuthProvider>
+    </ErrorProvider>
   );
 }
 

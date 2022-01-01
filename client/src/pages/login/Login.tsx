@@ -58,24 +58,19 @@ function Login() {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (login) {
-      // navigate('/2FA', {
-      //   state: {
-      //     email,
-      //     password,
-      //   },
-      // });
-      // }
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const is2FAEnabled = await login({ email, password });
-      if (is2FAEnabled) {
-        navigate('/2FA', {
-          state: {
-            email,
-            password,
-          },
-        });
-      } else {
-        navigate('/');
+      if (is2FAEnabled !== undefined) {
+        if (is2FAEnabled) {
+          navigate('/2FA', {
+            state: {
+              email,
+              password,
+            },
+          });
+        } else {
+          navigate('/');
+        }
       }
     }
   };
