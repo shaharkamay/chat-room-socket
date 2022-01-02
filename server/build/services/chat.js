@@ -13,8 +13,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const message_1 = __importDefault(require("../models/message"));
-const sendMessage = ({ email, content, timestamp }) => __awaiter(void 0, void 0, void 0, function* () {
-    const message = yield message_1.default.create({ email, content, timestamp });
+const sendMessage = ({ email, content, timestamp, }) => __awaiter(void 0, void 0, void 0, function* () {
+    const message = yield message_1.default.create({
+        email,
+        content,
+        timestamp,
+    });
     return message;
 });
 const getAllMessages = () => __awaiter(void 0, void 0, void 0, function* () {
