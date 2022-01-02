@@ -15,20 +15,24 @@ function SendMessage({
   sendDirect,
   socket,
   setMessages,
+  setTyping,
 }: {
   sendDirect: string;
   socket: Socket;
   setMessages: Dispatch<SetStateAction<NewMessage[]>>;
+  setTyping: Dispatch<SetStateAction<string>>;
 }) {
   const authContext = useContext(AuthContext);
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   // const accessToken = authContext?.accessToken;
 
+  const email = authContext?.email as string;
+
   const [sendMessage, setSendMessage] = useState('');
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     const message: NewMessage = {
-      email: authContext?.email as string,
+      email,
       content: sendMessage,
       timestamp: Date.now(),
     };
@@ -40,7 +44,20 @@ function SendMessage({
       socket.emit('direct', message);
     }
     setSendMessage('');
+    socket.emit('typing', { email, typing: false });
   };
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const handleChange = (e: any) => {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+    setSendMessage(e.target.value);
+    if (e.target.value !== '') {
+      socket.emit('typing', { email, typing: true });
+      setTyping('');
+    } else {
+      socket.emit('typing', { email, typing: false });
+    }
+  };
+
   return (
     <div className="send-message">
       <form className="send-message__form" onSubmit={handleSubmit}>
@@ -49,7 +66,7 @@ function SendMessage({
           dir="auto"
           placeholder="Type a message"
           value={sendMessage}
-          onChange={(e) => setSendMessage(e.target.value)}
+          onChange={handleChange}
           className="send-message__input"
         />
         <button className="send-message__button">

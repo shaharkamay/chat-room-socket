@@ -1,6 +1,7 @@
 name: Publish To Heorku
 on:
   pull_request:
+    types: [closed]
     branches:
       - main
       - dev
