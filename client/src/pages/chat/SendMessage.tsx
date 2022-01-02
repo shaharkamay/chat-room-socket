@@ -46,6 +46,7 @@ function SendMessage({
       <form className="send-message__form" onSubmit={handleSubmit}>
         <input
           type="text"
+          dir="auto"
           placeholder="Type a message"
           value={sendMessage}
           onChange={(e) => setSendMessage(e.target.value)}
