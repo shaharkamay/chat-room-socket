@@ -8,21 +8,22 @@ import Form from '../../components/form/Form';
 
 function TwoFactor() {
   const authContext = useContext(AuthContext);
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const loggedIn = authContext?.loggedIn;
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const login = authContext?.login;
   const enable2FA = authContext?.enable2FA;
 
   const [token, setToken] = useState('');
 
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  const { state } = useLocation();
+  const { state } = useLocation() as {
+    state:
+      | { email: string; password: string }
+      | { secret: { secret: string; qr: string } };
+  };
 
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (loggedIn && state.email) navigate('/');
+    if (loggedIn && 'email' in state) navigate('/');
   }, [loggedIn, navigate]);
 
   const formElements: FormElementType[] = [
@@ -34,7 +35,6 @@ function TwoFactor() {
       state: token,
       setState: setToken,
       handleBlur: (e, setError) => {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         if (!validator.isNumeric(e.target.value)) {
           setError('Invalid code');
         } else setError('');
@@ -46,18 +46,15 @@ function TwoFactor() {
     e.preventDefault();
     if ('secret' in state && enable2FA) {
       const is2FAEnabled = await enable2FA({
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         twofactorsecret: state.secret.secret,
         twofactortoken: token,
       });
       if (is2FAEnabled) navigate('/');
       else throw '2FA did not succeeded';
-    } else {
+    } else if ('email' in state) {
       if (login) {
         await login(
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-assignment
           { email: state.email, password: state.password },
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-assignment
           { twoFactorToken: token }
         );
       }
@@ -66,8 +63,7 @@ function TwoFactor() {
 
   return (
     <div>
-      {state.secret ? (
-        /* eslint-disable-next-line @typescript-eslint/no-unsafe-assignment  */
+      {'secret' in state ? (
         <img className="qr-img" src={state.secret.qr} alt="QR" />
       ) : (
         ''

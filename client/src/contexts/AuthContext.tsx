@@ -1,5 +1,11 @@
 import axios, { AxiosRequestHeaders } from 'axios';
-import React, { useCallback, useState, useEffect, useContext } from 'react';
+import React, {
+  useCallback,
+  useState,
+  useEffect,
+  useContext,
+  ReactNode,
+} from 'react';
 import BASE_URL from '../index';
 import { AuthContextInterface } from '../types/auth';
 import ErrorContext from './ErrorContext';
@@ -8,10 +14,7 @@ export const AuthContext = React.createContext<AuthContextInterface | null>(
   null
 );
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const AuthProvider = ({ children }: any) => {
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  //@ts-ignore
+export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const errorContext = useContext(ErrorContext);
   const notyf = errorContext?.notyf;
   const [email, setEmail] = useState<string | null>(null);
@@ -89,7 +92,7 @@ export const AuthProvider = ({ children }: any) => {
     async (
       { email, password }: { email: string; password: string },
       headers: AxiosRequestHeaders | undefined = undefined
-    ): Promise<void> => {
+    ): Promise<boolean | undefined> => {
       try {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         const { data } = await axios.post(
@@ -101,7 +104,7 @@ export const AuthProvider = ({ children }: any) => {
           { headers }
         );
         // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-        if (data.is2FAEnabled) return data.is2FAEnabled;
+        if (data.is2FAEnabled) return data.is2FAEnabled as boolean;
 
         // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
         setRefreshToken(data.refreshToken);
@@ -134,7 +137,7 @@ export const AuthProvider = ({ children }: any) => {
       lastName: string;
       email: string;
       password: string;
-    }) => {
+    }): Promise<{ isSignedUp: boolean } | undefined> => {
       try {
         const response = await axios.post(`${BASE_URL}/api/auth/sign-up`, {
           firstName,

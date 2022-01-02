@@ -51,8 +51,6 @@ function Chat() {
     });
 
     socketRef.current.on('message', (newMessage: NewMessage) => {
-      // // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-      // if(newMessage.direct) setDirect(newMessage.direct);
       setMessages((messages) => [...messages, newMessage]);
       if (Notification.permission === 'granted') {
         new Notification('A new message', {
@@ -79,8 +77,6 @@ function Chat() {
           sendDirect={sendDirect}
           setSendDirect={setSendDirect}
         />
-        {/* eslint-disable-next-line */}
-        {/* @ts-ignore */}
         <ChatBox
           sendDirect={sendDirect}
           messages={messages}
