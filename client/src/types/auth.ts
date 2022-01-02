@@ -5,11 +5,10 @@ export interface AuthContextInterface {
   email: string | null;
   accessToken: string | null;
   is2FAEnabled: boolean;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   login: (
     { email, password }: { email: string; password: string },
     headers?: AxiosRequestHeaders | undefined
-  ) => Promise<any>;
+  ) => Promise<boolean | undefined>;
   signUp: ({
     firstName,
     lastName,
@@ -20,7 +19,7 @@ export interface AuthContextInterface {
     lastName: string;
     email: string;
     password: string;
-  }) => Promise<unknown>;
+  }) => Promise<{ isSignedUp: boolean } | undefined>;
   logout: () => Promise<void>;
   enable2FA: (headers: AxiosRequestHeaders) => Promise<boolean | undefined>;
   disable2FA: () => Promise<boolean | undefined>;

@@ -21,7 +21,6 @@ function ChatBox({
   setTyping: Dispatch<SetStateAction<string>>;
 }) {
   const authContext = useContext(AuthContext);
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const email = authContext?.email;
 
   return (
@@ -32,7 +31,6 @@ function ChatBox({
             messages.map((message, i) => {
               return (
                 <Message
-                  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
                   direct={message.direct || ''}
                   dir={email === message.email ? 'right' : 'left'}
                   email={message.email}
@@ -44,12 +42,12 @@ function ChatBox({
                 />
               );
             })}
-          {typing !== '' ? (
-            <small className="typing">{typing} is typing...</small>
-          ) : (
-            ''
-          )}
         </div>
+        {typing !== '' ? (
+          <small className="typing">{typing} is typing...</small>
+        ) : (
+          ''
+        )}
       </div>
       <SendMessage
         sendDirect={sendDirect}

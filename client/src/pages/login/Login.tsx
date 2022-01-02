@@ -8,9 +8,7 @@ import { FormElementType } from '../../types/form';
 
 function Login() {
   const authContext = useContext(AuthContext);
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const loggedIn = authContext?.loggedIn;
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const login = authContext?.login;
 
   const [email, setEmail] = useState('');
@@ -31,7 +29,6 @@ function Login() {
       state: email,
       setState: setEmail,
       handleBlur: (e, setError) => {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         if (!validator.isEmail(e.target.value)) {
           setError('Invalid email');
         } else setError('');
@@ -45,7 +42,6 @@ function Login() {
       state: password,
       setState: setPassword,
       handleBlur: (e, setError) => {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         if (!validator.isStrongPassword(e.target.value, { minSymbols: 0 })) {
           setError(
             'Password must contain at least one uppercase, one lowercase and one number'
@@ -58,8 +54,10 @@ function Login() {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (login) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      const is2FAEnabled = await login({ email, password });
+      const is2FAEnabled: boolean | undefined = await login({
+        email,
+        password,
+      });
       if (is2FAEnabled !== undefined) {
         if (is2FAEnabled) {
           navigate('/2FA', {

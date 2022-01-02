@@ -5,9 +5,7 @@ import React, {
   Dispatch,
   SetStateAction,
 } from 'react';
-// import axios from 'axios';
 import { AuthContext } from '../../contexts/AuthContext';
-// import BASE_URL from '../../index';
 import { Socket } from 'socket.io-client';
 import { NewMessage } from '../../types/message';
 
@@ -23,8 +21,6 @@ function SendMessage({
   setTyping: Dispatch<SetStateAction<string>>;
 }) {
   const authContext = useContext(AuthContext);
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  // const accessToken = authContext?.accessToken;
 
   const email = authContext?.email as string;
 
@@ -46,15 +42,22 @@ function SendMessage({
     setSendMessage('');
     socket.emit('typing', { email, typing: false });
   };
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const handleChange = (e: any) => {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-    setSendMessage(e.target.value);
-    if (e.target.value !== '') {
-      socket.emit('typing', { email, typing: true });
-      setTyping('');
+  const handleChange = (e: React.FormEvent<HTMLInputElement>) => {
+    setSendMessage(e.currentTarget.value);
+    if (sendDirect === '') {
+      if (e.currentTarget.value !== '') {
+        socket.emit('typing', { email, typing: true });
+        setTyping('');
+      } else {
+        socket.emit('typing', { email, typing: false });
+      }
     } else {
-      socket.emit('typing', { email, typing: false });
+      if (e.currentTarget.value !== '') {
+        socket.emit('typing', { email, typing: true, direct: sendDirect });
+        setTyping('');
+      } else {
+        socket.emit('typing', { email, typing: false, direct: sendDirect });
+      }
     }
   };
 

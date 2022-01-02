@@ -26,11 +26,10 @@
   gap: 1em;
   padding: 1em;
   background-image: var(--bg-chat-img);
-
-  .typing {
-    background-color: var(--clr-secondary);
-    padding: 0 0.5em;
-  }
+}
+.typing {
+  background-color: var(--clr-secondary);
+  padding: 0 0.5em;
 }
 
 .message__container--left {

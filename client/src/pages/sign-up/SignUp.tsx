@@ -8,9 +8,7 @@ import { FormElementType } from '../../types/form';
 
 function SignUp() {
   const authContext = useContext(AuthContext);
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const loggedIn = authContext?.loggedIn;
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const signUp = authContext?.signUp;
 
   const navigate = useNavigate();
@@ -33,7 +31,6 @@ function SignUp() {
       state: firstName,
       setState: setFirstName,
       handleBlur: (e, setError) => {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         if (!validator.isAlpha(e.target.value)) {
           setError('Invalid name');
         } else setError('');
@@ -47,7 +44,6 @@ function SignUp() {
       state: lastName,
       setState: setLastName,
       handleBlur: (e, setError) => {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         if (!validator.isAlpha(e.target.value)) {
           setError('Invalid name');
         } else setError('');
@@ -61,7 +57,6 @@ function SignUp() {
       state: email,
       setState: setEmail,
       handleBlur: (e, setError) => {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         if (!validator.isEmail(e.target.value)) {
           setError('Invalid email');
         } else setError('');
@@ -75,7 +70,6 @@ function SignUp() {
       state: password,
       setState: setPassword,
       handleBlur: (e, setError) => {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         if (!validator.isStrongPassword(e.target.value, { minSymbols: 0 })) {
           setError(
             'Password must contain at least one uppercase, one lowercase and one number'
@@ -88,8 +82,7 @@ function SignUp() {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (signUp) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-explicit-any
-      const data: any = await signUp({ firstName, lastName, email, password });
+      const data = await signUp({ firstName, lastName, email, password });
       if (data) {
         if (data.isSignedUp) navigate('/login');
       }

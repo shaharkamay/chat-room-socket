@@ -2,7 +2,6 @@ import React, { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../../assets/styles/home.scss';
 import { AuthContext } from '../../contexts/AuthContext';
-//039724400
 
 function Home() {
   const authContext = useContext(AuthContext);
@@ -19,7 +18,6 @@ function Home() {
         const data = await get2FASecret();
         navigate('/2FA', {
           state: {
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             secret: data.secret,
           },
         });

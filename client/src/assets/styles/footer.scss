@@ -2,33 +2,33 @@
 footer
 */
 footer {
-    font-family: var(--font-text);
-    background-color: var(--background);
-    padding: 1em;
-    color: var(--foreground);
-    text-align: center;
-    display: flex;
-    justify-content: center;
+  font-family: var(--font-text);
+  background-color: var(--background);
+  padding: 1em;
+  color: var(--foreground);
+  text-align: center;
+  display: flex;
+  justify-content: center;
 }
 .copyright {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1em;
-    align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1em;
+  align-items: center;
 }
 .copyright-link {
-    color: inherit;
-    display: flex;
-    gap: .5em;
-    text-decoration: underline;
-    align-items: center;
+  color: inherit;
+  display: flex;
+  gap: 0.5em;
+  text-decoration: underline;
+  align-items: center;
 }
 .copyright-link:hover,
 .copyright-link:focus {
-    opacity: .75;
+  opacity: 0.75;
 }
 
 .github-img {
-    width: 1.5em;
-    filter: var(--inverted);
+  width: 1.5em;
+  filter: var(--inverted);
 }
