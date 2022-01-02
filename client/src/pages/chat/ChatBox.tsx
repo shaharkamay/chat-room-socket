@@ -10,11 +10,15 @@ function ChatBox({
   messages,
   socket,
   setMessages,
+  typing,
+  setTyping,
 }: {
   sendDirect: string;
   messages: NewMessage[];
   socket: Socket;
   setMessages: Dispatch<SetStateAction<NewMessage[]>>;
+  typing: string;
+  setTyping: Dispatch<SetStateAction<string>>;
 }) {
   const authContext = useContext(AuthContext);
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
@@ -40,12 +44,18 @@ function ChatBox({
                 />
               );
             })}
+          {typing !== '' ? (
+            <small className="typing">{typing} is typing...</small>
+          ) : (
+            ''
+          )}
         </div>
       </div>
       <SendMessage
         sendDirect={sendDirect}
         socket={socket}
         setMessages={setMessages}
+        setTyping={setTyping}
       />
     </div>
   );

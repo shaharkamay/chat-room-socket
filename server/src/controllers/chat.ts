@@ -9,7 +9,7 @@ import {
   getUserByEmail,
 } from '../utils/users';
 
-// const messages:NewMessage[] = [];
+let typingTimeout: NodeJS.Timeout | null = null;
 
 const chatController = (socket: Socket) => {
   console.log('connected to Socket');
@@ -48,6 +48,20 @@ const chatController = (socket: Socket) => {
     console.log(getAllUsers());
     io.emit('onlines', getAllUsers());
     console.log('client disconnected socket');
+  });
+
+  socket.on('typing', (data: { email: string; typing: boolean }) => {
+    if (data.typing) {
+      if (typingTimeout) {
+        clearTimeout(typingTimeout);
+      }
+      socket.broadcast.emit('typing', data.email);
+      typingTimeout = setTimeout(() => {
+        socket.broadcast.emit('typing', '');
+      }, 3000);
+    } else {
+      socket.broadcast.emit('typing', '');
+    }
   });
 };
 

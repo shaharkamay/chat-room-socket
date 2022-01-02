@@ -20,6 +20,7 @@ function Chat() {
 
   const [online, setOnline] = useState<SocketUser[]>([]);
   const [sendDirect, setSendDirect] = useState<string>('');
+  const [typing, setTyping] = useState<string>('');
 
   const socketRef = useRef() as { current: Socket };
 
@@ -64,6 +65,10 @@ function Chat() {
     socketRef.current.on('onlines', (online: SocketUser[]) => {
       setOnline(online.filter((user) => user.email !== email));
     });
+
+    socketRef.current.on('typing', (email: string) => {
+      setTyping(email);
+    });
   }, []);
 
   return (
@@ -81,6 +86,8 @@ function Chat() {
           messages={messages}
           socket={socketRef.current}
           setMessages={setMessages}
+          typing={typing}
+          setTyping={setTyping}
         />
       </div>
     </div>
