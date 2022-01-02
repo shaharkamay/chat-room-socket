@@ -30,6 +30,11 @@ function Chat() {
   }, [loggedIn]);
 
   useEffect(() => {
+    if (Notification.permission === 'default') {
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
+      Notification.requestPermission();
+    }
+
     socketRef.current = io(BASE_URL, {
       transports: ['websocket'],
       path: '/chat',
@@ -48,6 +53,12 @@ function Chat() {
       // // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       // if(newMessage.direct) setDirect(newMessage.direct);
       setMessages((messages) => [...messages, newMessage]);
+      if (Notification.permission === 'granted') {
+        new Notification('A new message', {
+          body: 'You have got a new message, check it out!',
+          icon: 'https://chat-mate-room.herokuapp.com/favicon.ico',
+        });
+      }
     });
 
     socketRef.current.on('onlines', (online: SocketUser[]) => {
