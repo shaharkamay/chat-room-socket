@@ -4,12 +4,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
-const auth_1 = __importDefault(require("../middleware/auth"));
-const chat_1 = __importDefault(require("./chat"));
-const auth_2 = __importDefault(require("./auth"));
+// import auth from '../middleware/auth';
+// import chatRouter from './chat';
+const auth_1 = __importDefault(require("./auth"));
 // import { eventsHandler } from '../controllers/eventsController';
 const apiRoute = express_1.default.Router();
-apiRoute.use("/auth", auth_2.default);
-apiRoute.use("/chat", auth_1.default, chat_1.default);
+apiRoute.use('/auth', auth_1.default);
+// apiRoute.use("/chat", auth, chatRouter);
 // apiRoute.get("/events", auth, eventsHandler);
 exports.default = apiRoute;

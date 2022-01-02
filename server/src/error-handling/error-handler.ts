@@ -1,7 +1,12 @@
-import { NextFunction, Request, Response } from "express";
+import { NextFunction, Request, Response } from 'express';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const errorHandler = (err: any, req: Request, res: Response, _next: NextFunction) => {
+const errorHandler = (
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  err: any,
+  req: Request,
+  res: Response,
+  _next: NextFunction
+) => {
   console.log(err);
   // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
   if (err.status && err.message) res.status(err.status).json(err.message);

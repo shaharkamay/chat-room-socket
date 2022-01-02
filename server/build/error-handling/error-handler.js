@@ -1,7 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const errorHandler = (
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const errorHandler = (err, req, res, _next) => {
+err, req, res, _next) => {
     console.log(err);
     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     if (err.status && err.message)
