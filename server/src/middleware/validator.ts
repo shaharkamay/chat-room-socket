@@ -56,8 +56,6 @@ const validate2FA = async (req: Request, res: Response, next: NextFunction) => {
       }
     }
   } catch (error) {
-    res.send('here');
-    res.end();
     next(error);
   }
 };
