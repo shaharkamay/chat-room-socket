@@ -3,7 +3,7 @@ import { ErrorContextInterface } from '../types/error';
 import { Notyf } from 'notyf';
 
 const ErrorContext = React.createContext<ErrorContextInterface | null>(null);
-
+//
 const ErrorProvider = ({ children }: { children: ReactNode }) => {
   const notyf = new Notyf({
     duration: 5000,
