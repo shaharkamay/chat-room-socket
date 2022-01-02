@@ -12,7 +12,7 @@ const errorHandler = (
   if (err.status && err.message) {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     res.status(err.status).json(config.mongo.url);
-    // res.status(err.status).json(err.message);
+    // res.status(err.status).json(err.message);g
   }
 
   res.status(500).json('Server error, please try again later');
