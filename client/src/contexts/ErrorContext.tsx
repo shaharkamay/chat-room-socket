@@ -1,4 +1,3 @@
-
 import React, { ReactNode } from 'react';
 import { ErrorContextInterface } from '../types/error';
 import { Notyf } from 'notyf';
