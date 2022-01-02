@@ -33,8 +33,6 @@ const validateLogin = (req: Request, res: Response, next: NextFunction) => {
     if (res.locals.validated) next();
     else next({ status: 400, message: 'Invalid email or password' });
   } catch (error) {
-    res.send('here');
-    res.end();
     next(error);
   }
 };
@@ -58,6 +56,8 @@ const validate2FA = async (req: Request, res: Response, next: NextFunction) => {
       }
     }
   } catch (error) {
+    res.send('here');
+    res.end();
     next(error);
   }
 };
