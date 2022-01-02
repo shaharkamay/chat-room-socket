@@ -24,14 +24,15 @@ const validateSignUp = (req: Request, res: Response, next: NextFunction) => {
 
 const validateLogin = (req: Request, res: Response, next: NextFunction) => {
   try {
-    const email = <string>req.body.email;
-    const password = <string>req.body.password;
-    res.locals.validated =
-      validator.isEmail(email) &&
-      validator.isStrongPassword(password, { minSymbols: 0 });
+    // const email = <string>req.body.email;
+    // const password = <string>req.body.password;
+    next();
+    // res.locals.validated =
+    //   validator.isEmail(email) &&
+    //   validator.isStrongPassword(password, { minSymbols: 0 });
 
-    if (res.locals.validated) next();
-    else next({ status: 400, message: 'Invalid email or password' });
+    // if (res.locals.validated) next();
+    // else next({ status: 400, message: 'Invalid email or password' });
   } catch (error) {
     next(error);
   }
